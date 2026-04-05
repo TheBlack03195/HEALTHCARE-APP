@@ -16,7 +16,7 @@ A mini healthcare support web app built as an internship assignment for **Jarura
 | Markup | HTML5 (semantic) |
 | Styling | CSS3 (custom properties, Grid, Flexbox, animations) |
 | Logic | Vanilla JavaScript (ES6+) |
-| AI | Google Gemini 2.5 Flash via Generative Language API |
+| AI | Groq API — LLaMA 3.3 70B (free, ultra-fast inference) |
 | Serverless | Netlify Functions (API proxy) |
 | Fonts | Google Fonts — Cormorant Garamond + DM Sans |
 | Hosting | Netlify (static + serverless) |
@@ -28,18 +28,24 @@ No frameworks, no build tools — pure, deployable HTML/CSS/JS.
 ## 🤖 AI Feature — Healthcare FAQ Chatbot
 
 ### What it does
-An embedded AI assistant powered by **Google Gemini 2.5 Flash** that handles patient and volunteer queries in real-time.
+An embedded AI assistant powered by **Groq's LLaMA 3.3 70B** model that handles patient and volunteer queries in real-time with extremely fast response times.
 
 ### How it works
 1. User types a question in the chat window (or taps a suggestion chip)
 2. The frontend sends the message to `/api/chat` — our own serverless Netlify Function
-3. The function securely calls the **Gemini API** server-side (API key never exposed)
-4. Gemini responds and the reply is returned to the frontend
+3. The function securely calls the **Groq API** server-side (API key never exposed)
+4. LLaMA 3.3 70B responds and the reply is returned to the frontend
 5. Conversation history is maintained client-side for multi-turn context
 
+### Why Groq?
+- **Completely free** — 14,400 requests/day, no billing required
+- **Ultra-fast** — Groq's custom LPU hardware delivers near-instant responses
+- **Powerful model** — LLaMA 3.3 70B matches GPT-4 class quality
+- **India-friendly** — works without regional restrictions
+
 ### API Key Security
-- The `GEMINI_API_KEY` is stored as a **Netlify environment variable** — never in code or GitHub
-- All Gemini requests are proxied through `netlify/functions/chat.js`
+- The `GROQ_API_KEY` is stored as a **Netlify environment variable** — never in code or GitHub
+- All Groq requests are proxied through `netlify/functions/chat.js`
 - The `.gitignore` excludes `.env` so no secrets are ever committed
 
 ### System Prompt Design
@@ -98,10 +104,10 @@ git push -u origin main
 
 ### Step 3 — Add Environment Variable
 1. Go to **Site Settings → Environment Variables**
-2. Add: `GEMINI_API_KEY` = `your_actual_api_key`
+2. Add: `GROQ_API_KEY` = your Groq API key
 3. Trigger a redeploy — done ✅
 
-Get your Gemini API key free at [aistudio.google.com](https://aistudio.google.com)
+Get your free Groq API key at [console.groq.com](https://console.groq.com) — no billing required.
 
 ---
 
@@ -116,7 +122,7 @@ medcare-connect/
 ├── .gitignore                  # Excludes .env
 └── netlify/
     └── functions/
-        └── chat.js             # Serverless proxy (Gemini API)
+        └── chat.js             # Serverless proxy (Groq API)
 ```
 
 ---
@@ -126,7 +132,7 @@ medcare-connect/
 **MedCare Connect** is a conceptual non-profit initiative aimed at:
 - Connecting underserved patients in Assam & Northeast India with volunteer healthcare workers
 - Providing free medical consultations, mental health support, and home nursing care
-- Leveraging AI (Gemini 2.5 Flash) to scale support without proportionally scaling staff costs
+- Leveraging AI (Groq + LLaMA 3.3 70B) to scale support without proportionally scaling staff costs
 
 ---
 
