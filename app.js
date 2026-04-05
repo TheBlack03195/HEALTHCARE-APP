@@ -1,4 +1,4 @@
-
+// ===== TAB SWITCHING =====
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     const target = tab.dataset.tab;
@@ -9,6 +9,7 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
+// ===== RANGE INPUT =====
 const hoursRange = document.getElementById('hours-range');
 const hoursLabel = document.getElementById('hours-label');
 if (hoursRange) {
@@ -17,6 +18,7 @@ if (hoursRange) {
   });
 }
 
+// ===== FORM SUBMISSIONS =====
 function showModal(title, body) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').textContent = body;
@@ -45,7 +47,8 @@ document.getElementById('contact-form').addEventListener('submit', e => {
   e.target.reset();
 });
 
-const DEV_API_KEY = 'YOUR_GEMINI_API_KEY';
+
+const DEV_API_KEY = 'YOUR_GROQ_API_KEY'; 
 
 const SYSTEM_PROMPT = `You are a compassionate and knowledgeable AI assistant for MedCare Connect, a non-profit healthcare NGO serving communities in Assam and Northeast India.
 
@@ -118,33 +121,41 @@ async function sendMessage() {
   try {
     let reply = null;
 
+    
     const isLocal = window.location.hostname === 'localhost' ||
                     window.location.hostname === '127.0.0.1' ||
                     window.location.protocol === 'file:';
 
     if (isLocal) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${DEV_API_KEY}`;
-      const contents = conversationHistory.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-      }));
-      const res = await fetch(url, {
+  
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEV_API_KEY}`
+        },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents,
-          generationConfig: { maxOutputTokens: 1000 }
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            ...conversationHistory.map(msg => ({
+              role: msg.role === 'assistant' ? 'assistant' : 'user',
+              content: msg.content
+            }))
+          ],
+          max_tokens: 1000,
+          temperature: 0.7
         })
       });
       const data = await res.json();
       if (!res.ok) {
-        console.error('Gemini error:', data);
-        throw new Error(data?.error?.message || 'Gemini API error');
+        console.error('Groq error:', data);
+        throw new Error(data?.error?.message || 'Groq API error');
       }
-      reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+      reply = data?.choices?.[0]?.message?.content || null;
 
     } else {
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -154,6 +165,7 @@ async function sendMessage() {
         })
       });
       const data = await res.json();
+ 
       if (data.error || data.geminiError) {
         removeTyping();
         addMessage('bot', 'Error: ' + (data.geminiError || data.error || data.detail || JSON.stringify(data)));
@@ -189,6 +201,7 @@ function sendSuggestion(btn) {
   btn.closest('.chat-suggestions').style.display = 'none';
   sendMessage();
 }
+
 
 document.getElementById('chat-input').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {

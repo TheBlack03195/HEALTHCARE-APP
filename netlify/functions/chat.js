@@ -5,13 +5,12 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return {
-      statusCode: 500,
+      statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'GEMINI_API_KEY environment variable is not set on Netlify' })
+      body: JSON.stringify({ error: 'GROQ_API_KEY environment variable is not set on Netlify' })
     };
   }
 
@@ -21,31 +20,32 @@ exports.handler = async (event) => {
     history = parsed.history;
     systemPrompt = parsed.systemPrompt;
   } catch (e) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Invalid JSON body' })
-    };
+    return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Invalid JSON body' }) };
   }
 
-  const contents = history.map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }]
-  }));
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...history.map(msg => ({
+      role: msg.role === 'assistant' ? 'assistant' : 'user',
+      content: msg.content
+    }))
+  ];
 
   const requestBody = JSON.stringify({
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents,
-    generationConfig: { maxOutputTokens: 1000 }
+    model: 'llama-3.3-70b-versatile',
+    messages,
+    max_tokens: 1000,
+    temperature: 0.7
   });
 
   return new Promise((resolve) => {
     const options = {
-      hostname: 'generativelanguage.googleapis.com',
-      path: `/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
+      hostname: 'api.groq.com',
+      path: '/openai/v1/chat/completions',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Length': Buffer.byteLength(requestBody)
       }
     };
@@ -56,19 +56,17 @@ exports.handler = async (event) => {
       res.on('end', () => {
         try {
           const parsed = JSON.parse(data);
-
           if (res.statusCode !== 200) {
             return resolve({
-              statusCode: 200, 
+              statusCode: 200,
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                error: `Gemini returned ${res.statusCode}`,
+                error: `Groq returned ${res.statusCode}`,
                 geminiError: parsed?.error?.message || JSON.stringify(parsed)
               })
             });
           }
-
-          const reply = parsed?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+          const reply = parsed?.choices?.[0]?.message?.content || null;
           resolve({
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
@@ -78,7 +76,7 @@ exports.handler = async (event) => {
           resolve({
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: 'Failed to parse Gemini response', raw: data.slice(0, 300) })
+            body: JSON.stringify({ error: 'Failed to parse response', raw: data.slice(0, 300) })
           });
         }
       });
