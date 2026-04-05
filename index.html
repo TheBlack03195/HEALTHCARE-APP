@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedCare Connect — Healthcare Support Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="brand-cross">✦</span>
+      <span class="brand-name">MedCare<em>Connect</em></span>
+    </div>
+    <div class="nav-links">
+      <a href="#register">Register</a>
+      <a href="#contact">Contact</a>
+      <a href="#chatbot">AI Help</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg">
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Non-profit Healthcare Initiative</p>
+      <h1 class="hero-title">Compassionate Care<br /><em>for Every Patient</em></h1>
+      <p class="hero-sub">Connecting patients with volunteer healthcare workers, support resources, and AI-assisted guidance — free of charge.</p>
+      <div class="hero-cta">
+        <a href="#register" class="btn-primary">Get Support</a>
+        <a href="#chatbot" class="btn-ghost">Ask AI Assistant ↓</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">4,200+</span><span class="stat-label">Patients Supported</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">380</span><span class="stat-label">Active Volunteers</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">12</span><span class="stat-label">Districts Covered</span></div>
+    </div>
+  </header>
+
+  <!-- REGISTRATION SECTION -->
+  <section id="register" class="section section-forms">
+    <div class="container">
+      <div class="section-label">Registration Portal</div>
+      <h2 class="section-title">Join Our Healthcare Network</h2>
+      <p class="section-sub">Whether you need support or want to volunteer — you belong here.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="patient">🏥 Patient Support</button>
+        <button class="tab" data-tab="volunteer">🤝 Volunteer</button>
+        <button class="tab" data-tab="contact">✉ Contact Us</button>
+      </div>
+
+      <!-- PATIENT FORM -->
+      <div class="form-panel active" id="tab-patient">
+        <form class="form" id="patient-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="name" placeholder="Your full name" required />
+            </div>
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" name="age" placeholder="Your age" min="1" max="120" />
+            </div>
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" name="email" placeholder="your@email.com" />
+            </div>
+            <div class="form-group full">
+              <label>Address / Location *</label>
+              <input type="text" name="address" placeholder="Village, Block, District" required />
+            </div>
+            <div class="form-group full">
+              <label>Type of Support Needed *</label>
+              <select name="support_type" required>
+                <option value="" disabled selected>Select support type</option>
+                <option>General Medical Consultation</option>
+                <option>Mental Health Support</option>
+                <option>Medication Assistance</option>
+                <option>Home Visit / Nursing Care</option>
+                <option>Diagnostics / Lab Tests</option>
+                <option>Emergency Support</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Brief Description of Need</label>
+              <textarea name="description" rows="3" placeholder="Describe your situation in a few words..."></textarea>
+            </div>
+            <div class="form-group full">
+              <label>Preferred Contact Time</label>
+              <div class="radio-group">
+                <label class="radio-item"><input type="radio" name="contact_time" value="morning" /> Morning (9–12)</label>
+                <label class="radio-item"><input type="radio" name="contact_time" value="afternoon" /> Afternoon (12–5)</label>
+                <label class="radio-item"><input type="radio" name="contact_time" value="evening" /> Evening (5–8)</label>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary btn-submit">Submit Request</button>
+        </form>
+      </div>
+
+      <!-- VOLUNTEER FORM -->
+      <div class="form-panel" id="tab-volunteer">
+        <form class="form" id="volunteer-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="name" placeholder="Your full name" required />
+            </div>
+            <div class="form-group">
+              <label>Profession *</label>
+              <input type="text" name="profession" placeholder="e.g., Doctor, Nurse, Social Worker" required />
+            </div>
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required />
+            </div>
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" name="email" placeholder="your@email.com" required />
+            </div>
+            <div class="form-group full">
+              <label>Location / District *</label>
+              <input type="text" name="location" placeholder="Your district or city" required />
+            </div>
+            <div class="form-group full">
+              <label>Specialization / Skills</label>
+              <div class="checkbox-group">
+                <label class="check-item"><input type="checkbox" value="general" /> General Medicine</label>
+                <label class="check-item"><input type="checkbox" value="mental" /> Mental Health</label>
+                <label class="check-item"><input type="checkbox" value="pediatrics" /> Pediatrics</label>
+                <label class="check-item"><input type="checkbox" value="nursing" /> Nursing / First Aid</label>
+                <label class="check-item"><input type="checkbox" value="counseling" /> Counseling</label>
+                <label class="check-item"><input type="checkbox" value="outreach" /> Community Outreach</label>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>Availability (hours/week)</label>
+              <input type="range" name="hours" min="1" max="40" value="5" class="range-input" id="hours-range" />
+              <span class="range-label" id="hours-label">5 hrs/week</span>
+            </div>
+            <div class="form-group full">
+              <label>Why do you want to volunteer?</label>
+              <textarea name="motivation" rows="3" placeholder="Tell us a bit about your motivation..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary btn-submit">Register as Volunteer</button>
+        </form>
+      </div>
+
+      <!-- CONTACT FORM -->
+      <div class="form-panel" id="tab-contact">
+        <form class="form" id="contact-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" name="name" placeholder="Full name" required />
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" name="email" placeholder="your@email.com" required />
+            </div>
+            <div class="form-group full">
+              <label>Subject *</label>
+              <select name="subject" required>
+                <option value="" disabled selected>Select subject</option>
+                <option>General Inquiry</option>
+                <option>Partnership / Collaboration</option>
+                <option>Donation / Funding</option>
+                <option>Media / Press</option>
+                <option>Feedback / Complaint</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Message *</label>
+              <textarea name="message" rows="5" placeholder="Type your message here..." required></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary btn-submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI CHATBOT SECTION -->
+  <section id="chatbot" class="section section-chat">
+    <div class="container">
+      <div class="section-label ai-label">✦ AI-Powered</div>
+      <h2 class="section-title">Healthcare FAQ Assistant</h2>
+      <p class="section-sub">Ask anything about our services, healthcare guidance, or how to get help. Powered by Gemini AI.</p>
+
+      <div class="chat-wrapper">
+        <div class="chat-window" id="chat-window">
+          <div class="chat-message bot">
+            <div class="avatar bot-avatar">✦</div>
+            <div class="bubble">
+              Hello! I'm MedCare's AI assistant. I can help you with:<br/>
+              • Information about our services<br/>
+              • General healthcare FAQs<br/>
+              • How to register or volunteer<br/>
+              • Guidance on what support to seek<br/><br/>
+              How can I help you today?
+            </div>
+          </div>
+        </div>
+        <div class="chat-suggestions">
+          <button class="suggestion" onclick="sendSuggestion(this)">How do I register as a patient?</button>
+          <button class="suggestion" onclick="sendSuggestion(this)">What services are free?</button>
+          <button class="suggestion" onclick="sendSuggestion(this)">How can I volunteer?</button>
+          <button class="suggestion" onclick="sendSuggestion(this)">I have a medical emergency</button>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Type your question here..." />
+          <button id="send-btn" onclick="sendMessage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <p class="chat-disclaimer">AI responses are for informational purposes only. Always consult a medical professional for health decisions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-icon">✓</div>
+      <h3 id="modal-title">Request Submitted!</h3>
+      <p id="modal-body">Thank you. Our team will reach out within 24 hours.</p>
+      <button class="btn-primary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-cross">✦</span>
+        <span class="brand-name">MedCare<em>Connect</em></span>
+      </div>
+      <p class="footer-copy">A non-profit healthcare initiative serving communities across Assam & Northeast India.</p>
+      <p class="footer-copy small">Built with HTML · CSS · Vanilla JS · Claude AI API</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
