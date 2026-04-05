@@ -1,5 +1,6 @@
+const https = require('https');
+
 exports.handler = async (event) => {
-  // Only allow POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
@@ -8,55 +9,68 @@ exports.handler = async (event) => {
     const { history, systemPrompt } = JSON.parse(event.body);
 
     const apiKey = process.env.GEMINI_API_KEY;
-
     if (!apiKey) {
-      console.error('GEMINI_API_KEY is not set in environment variables');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'API key not configured' })
-      };
+      return { statusCode: 500, body: JSON.stringify({ error: 'GEMINI_API_KEY not set in Netlify environment variables' }) };
     }
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
     const contents = history.map(msg => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
     }));
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents,
-        generationConfig: { maxOutputTokens: 1000 }
-      })
+    const requestBody = JSON.stringify({
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents,
+      generationConfig: { maxOutputTokens: 1000 }
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Gemini API error:', JSON.stringify(data));
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: data?.error?.message || 'Gemini API error' })
+    // Use Node.js https module — works on all Netlify Function runtimes
+    const reply = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'generativelanguage.googleapis.com',
+        path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(requestBody)
+        }
       };
-    }
 
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const req = https.request(options, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          try {
+            const parsed = JSON.parse(data);
+            if (res.statusCode !== 200) {
+              console.error('Gemini error response:', data);
+              reject(new Error(parsed?.error?.message || `Gemini returned ${res.statusCode}`));
+            } else {
+              const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+              resolve(text);
+            }
+          } catch (e) {
+            reject(new Error('Failed to parse Gemini response'));
+          }
+        });
+      });
+
+      req.on('error', reject);
+      req.write(requestBody);
+      req.end();
+    });
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reply: reply || null })
+      body: JSON.stringify({ reply })
     };
 
   } catch (err) {
-    console.error('Serverless function error:', err);
+    console.error('Function error:', err.message);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' })
+      body: JSON.stringify({ error: err.message || 'Internal server error' })
     };
   }
 };
