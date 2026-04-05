@@ -42,7 +42,7 @@ exports.handler = async (event) => {
   return new Promise((resolve) => {
     const options = {
       hostname: 'generativelanguage.googleapis.com',
-      path: `/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      path: `/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ exports.handler = async (event) => {
 
           if (res.statusCode !== 200) {
             return resolve({
-              statusCode: 200,
+              statusCode: 200, 
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 error: `Gemini returned ${res.statusCode}`,

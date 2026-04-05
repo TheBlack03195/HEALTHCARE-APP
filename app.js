@@ -123,7 +123,7 @@ async function sendMessage() {
                     window.location.protocol === 'file:';
 
     if (isLocal) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${DEV_API_KEY}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${DEV_API_KEY}`;
       const contents = conversationHistory.map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: msg.content }]
@@ -189,7 +189,6 @@ function sendSuggestion(btn) {
   btn.closest('.chat-suggestions').style.display = 'none';
   sendMessage();
 }
-
 
 document.getElementById('chat-input').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
