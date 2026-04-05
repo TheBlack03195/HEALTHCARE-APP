@@ -9,6 +9,7 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
+
 const hoursRange = document.getElementById('hours-range');
 const hoursLabel = document.getElementById('hours-label');
 if (hoursRange) {
@@ -145,7 +146,6 @@ async function sendMessage() {
       reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
 
     } else {
-   
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -155,6 +155,13 @@ async function sendMessage() {
         })
       });
       const data = await res.json();
+      if (data.error || data.geminiError) {
+        removeTyping();
+        addMessage('bot', 'Error: ' + (data.geminiError || data.error || data.detail || JSON.stringify(data)));
+        isLoading = false;
+        sendBtn.disabled = false;
+        return;
+      }
       reply = data.reply || null;
     }
 
@@ -183,7 +190,6 @@ function sendSuggestion(btn) {
   btn.closest('.chat-suggestions').style.display = 'none';
   sendMessage();
 }
-
 
 document.getElementById('chat-input').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
